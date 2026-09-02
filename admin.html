@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="hy">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+    body { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: #f4f6f8; }
+    .login-card { background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 100%; max-width: 360px; }
+    .login-card h2 { margin-bottom: 20px; text-align: center; color: #333; }
+    .form-group { margin-bottom: 15px; }
+    .form-group label { display: block; margin-bottom: 5px; color: #666; font-size: 14px; }
+    .form-group input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
+    button { width: 100%; padding: 10px; background: #007bff; color: #fff; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; }
+    button:hover { background: #0056b3; }
+    .error-msg { color: #dc3545; font-size: 13px; margin-top: 10px; text-align: center; display: none; }
+  </style>
+</head>
+<body>
+
+  <div class="login-card">
+    <h2>Ադմին Մուտք</h2>
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="email">Էլ․ փոստ</label>
+        <input type="email" id="email" required placeholder="admin@example.com">
+      </div>
+      <div class="form-group">
+        <label for="password">Գաղտնաբառ</label>
+        <input type="password" id="password" required placeholder="******">
+      </div>
+      <button type="submit" id="loginBtn">Մուտք</button>
+      <div id="errorMsg" class="error-msg"></div>
+    </form>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDO6yNLdh3_FVWi2z5PjT9TFKiqsmyWPQk",
+      authDomain: "youravto-78adb.firebaseapp.com",
+      databaseURL: "https://youravto-78adb-default-rtdb.firebaseio.com",
+      projectId: "youravto-78adb",
+      storageBucket: "youravto-78adb.firebasestorage.app",
+      messagingSenderId: "230081951776",
+      appId: "1:230081951776:web:92817dac120d4bf63b6445",
+      measurementId: "G-4BTTWRRDPS"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // Եթե արդեն մուտք է գործած, անմիջապես տանել adm.html
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        window.location.href = "adm.html";
+      }
+    });
+
+    const loginForm = document.getElementById("loginForm");
+    const loginBtn = document.getElementById("loginBtn");
+    const errorMsg = document.getElementById("errorMsg");
+
+    loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      errorMsg.style.display = "none";
+      loginBtn.disabled = true;
+      loginBtn.innerText = "Ստուգվում է...";
+
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        window.location.href = "adm.html";
+      } catch (error) {
+        errorMsg.innerText = "Սխալ էլ․ փոստ կամ գաղտնաբառ։";
+        errorMsg.style.display = "block";
+        loginBtn.disabled = false;
+        loginBtn.innerText = "Մուտք";
+      }
+    });
+  </script>
+</body>
+</html>
