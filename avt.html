@@ -305,6 +305,15 @@ function getCarImages(car){
     return imgs;
 }
 
+// ─── Cloudinary URL transform — /upload/ հատվածից հետո ավելացնում ենք
+// f_auto,q_auto,w_{width},c_limit՝ որ image-ը ավտոմատ օպտիմալացվի
+// (format/quality) և չբեռնվի ավելի մեծ, քան պետք է։ Ոչ-Cloudinary URL-ների
+// համար (օր. հին Firebase Storage նկարներ) ուղղակի վերադարձնում ենք url-ն ինչպես կա ──
+function cloudinaryImg(url, width){
+    if (!url || url.indexOf('/upload/') === -1) return url;
+    return url.replace(/\/upload\/[^/]+\//, `/upload/f_auto,q_auto,w_${width},c_limit/`);
+}
+
 function renderImageGallery(car){
     try{
         const images = getCarImages(car);
@@ -314,7 +323,7 @@ function renderImageGallery(car){
             wrapper.innerHTML = `<div class="swiper-slide no-img">Նկար հասանելի չէ</div>`;
         } else {
             wrapper.innerHTML = images.map(url =>
-                `<div class="swiper-slide"><img src="${url}" alt="${car.brand || ''} ${car.model || ''}"></div>`
+                `<div class="swiper-slide"><img src="${cloudinaryImg(url, 1000)}" alt="${car.brand || ''} ${car.model || ''}"></div>`
             ).join('');
         }
 
