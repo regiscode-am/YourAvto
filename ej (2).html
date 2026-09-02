@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="hy">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Մեքենաներ | YourAvto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+    :root{
+        --bg:#0B0F17;
+        --bg-alt:#080B11;
+        --panel:rgba(17,24,39,0.55);
+        --border:rgba(255,255,255,0.08);
+        --border-strong:rgba(255,255,255,0.16);
+        --text:#F3F4F6;
+        --text-dim:#9CA3AF;
+        --accent:#3B82F6;
+        --accent-soft:rgba(59,130,246,0.12);
+        --accent-2:#818CF8;
+        --danger:#F87171;
+        --success:#34D399;
+        --font:'Plus Jakarta Sans', sans-serif;
+    }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{
+        font-family:var(--font);
+        background-color:var(--bg);
+        color:var(--text);
+        line-height:1.6;
+        overflow-x:hidden;
+    }
+    a{text-decoration:none;color:inherit;}
+    ul{list-style:none;}
+    .container{width:88%;max-width:1440px;margin:0 auto;}
+
+    /* ambient glow */
+    .glow-bg{
+        position:fixed;top:-10%;left:50%;transform:translateX(-50%);
+        width:1000px;height:500px;
+        background:radial-gradient(circle, rgba(59,130,246,0.10) 0%, rgba(139,92,246,0.04) 40%, rgba(11,15,23,0) 70%);
+        pointer-events:none;z-index:0;
+    }
+
+    /* header */
+    header{
+        position:sticky;top:0;z-index:1000;
+        background-color:rgba(11,15,23,0.75);
+        backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+        border-bottom:1px solid var(--border);
+    }
+    .header-flex{display:flex;align-items:center;justify-content:space-between;height:80px;}
+    .logo a{font-size:22px;font-weight:800;letter-spacing:-0.5px;color:#fff;}
+    .logo span{color:var(--accent);}
+    .nav-menu{display:none;}
+    .nav-menu a{font-size:14px;font-weight:500;color:var(--text-dim);margin-left:32px;transition:.2s;}
+    .nav-menu a:hover, .nav-menu a.active{color:#fff;}
+    .header-actions a{
+        padding:10px 20px;font-size:14px;font-weight:600;color:#fff;
+        background:var(--accent);border-radius:12px;transition:.25s;
+        box-shadow:0 8px 20px -8px rgba(59,130,246,0.5);
+        white-space:nowrap;
+    }
+    .header-actions a:hover{background:#2563EB;transform:translateY(-1px);}
+    .burger-menu{display:flex;flex-direction:column;justify-content:space-between;width:20px;height:13px;background:none;border:none;cursor:pointer;}
+    .burger-menu span{display:block;width:100%;height:2px;background:#fff;transition:.3s;}
+    .burger-menu.open span:nth-child(1){transform:translateY(5.5px) rotate(45deg);}
+    .burger-menu.open span:nth-child(2){transform:rotate(-45deg) translateY(-5.5px);}
+    .mobile-nav-overlay{
+        position:fixed;inset:0;background:var(--bg);z-index:1001;
+        display:flex;align-items:center;justify-content:center;
+        transform:translateY(-100%);transition:transform .5s cubic-bezier(.77,0,.175,1);
+    }
+    .mobile-nav-overlay.open{transform:translateY(0);}
+    .mobile-menu-links li{margin:22px 0;text-align:center;}
+    .mobile-menu-links a{font-size:24px;font-weight:700;color:#fff;}
+
+    @media (min-width:768px){
+        .nav-menu{display:flex;align-items:center;}
+        .burger-menu{display:none;}
+    }
+
+    /* page heading */
+    .page-hero{padding:56px 0 32px;position:relative;z-index:1;}
+    .page-hero h1{font-size:32px;font-weight:800;color:#fff;letter-spacing:-0.5px;margin-bottom:10px;}
+    .page-hero p{color:var(--text-dim);font-size:15px;max-width:520px;}
+
+    /* search */
+    .search-wrap{margin:28px 0 20px;position:relative;z-index:1;}
+    #searchInput{
+        display:block;width:100%;max-width:520px;
+        padding:15px 22px;border-radius:14px;
+        background:var(--panel);border:1px solid var(--border);
+        color:#fff;font-size:15px;outline:none;
+        font-family:var(--font);
+        transition:.25s;
+    }
+    #searchInput::placeholder{color:var(--text-dim);}
+    #searchInput:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);}
+
+    /* filters */
+    .filters-responsive{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:32px;position:relative;z-index:1;}
+    .filter-btn{
+        background:var(--panel);color:var(--text-dim);border:1px solid var(--border);
+        padding:9px 18px;border-radius:50px;font-weight:500;font-size:13px;cursor:pointer;
+        font-family:var(--font);transition:.2s;
+    }
+    .filter-btn:hover:not(.active){border-color:var(--border-strong);color:#fff;}
+    .filter-btn.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+    .filter-select{
+        background:var(--panel);color:var(--text);border:1px solid var(--border);
+        padding:9px 16px;border-radius:50px;font-size:13px;font-family:var(--font);
+        outline:none;cursor:pointer;max-width:46vw;
+    }
+    .filter-select:focus{border-color:var(--accent);}
+    @media (min-width:640px){.filter-select{max-width:180px;}}
+
+    .filter-toggle-btn{
+        display:inline-flex;align-items:center;gap:8px;
+        padding:11px 22px;position:relative;
+    }
+    .filter-icon{font-size:14px;}
+    .filter-count-badge{
+        background:var(--accent);color:#fff;font-size:11px;font-weight:700;
+        min-width:18px;height:18px;border-radius:50%;
+        display:flex;align-items:center;justify-content:center;padding:0 4px;
+    }
+
+    .filter-modal-content{max-width:440px;max-height:88vh;overflow-y:auto;scrollbar-width:none;}
+    .filter-modal-content::-webkit-scrollbar{display:none;}
+    .filter-group{margin-bottom:18px;}
+    .filter-group-label{font-size:12px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;}
+    .filter-chip-row{display:flex;flex-wrap:wrap;gap:8px;}
+    .filter-select-full{max-width:100%;width:100%;border-radius:10px;}
+    .filter-modal-actions{display:flex;gap:10px;margin-top:22px;}
+    .btn-secondary-modal{
+        flex:1;background:transparent;color:var(--text-dim);border:1px solid var(--border);
+        padding:13px;border-radius:10px;font-weight:600;font-size:14px;cursor:pointer;
+        font-family:var(--font);transition:.2s;
+    }
+    .btn-secondary-modal:hover{border-color:var(--border-strong);color:#fff;}
+    .filter-modal-actions .btn-primary-modal{flex:1.4;}
+
+    /* grid */
+    .cars-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;position:relative;z-index:1;padding-bottom:80px;}
+    @media (min-width:640px){.cars-grid{gap:22px;}}
+    @media (min-width:768px){.cars-grid{grid-template-columns:repeat(3,1fr);gap:26px;}}
+    @media (min-width:1180px){.cars-grid{grid-template-columns:repeat(4,1fr);}}
+
+    .car-card{
+        position:relative;
+        background:var(--panel);
+        border:1px solid var(--border);
+        border-radius:20px;
+        padding:10px;
+        cursor:pointer;
+        transition:transform .35s cubic-bezier(.16,1,.3,1), border-color .3s, box-shadow .35s;
+        display:flex;flex-direction:column;
+        backdrop-filter:blur(6px);
+        box-shadow:0 1px 0 rgba(255,255,255,0.02) inset;
+    }
+    .car-card:hover{transform:translateY(-6px);border-color:var(--border-strong);box-shadow:0 24px 44px -22px rgba(0,0,0,0.65);}
+    .car-img-wrap{position:relative;border-radius:15px;overflow:hidden;background:linear-gradient(135deg,#111827,#0B0F17);aspect-ratio:1/1;}
+    .car-img-wrap img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s cubic-bezier(.16,1,.3,1);}
+    .car-card:hover .car-img-wrap img{transform:scale(1.06);}
+    .car-img-wrap::after{
+        content:'';position:absolute;inset:0;
+        background:linear-gradient(180deg, rgba(0,0,0,0) 55%, rgba(0,0,0,0.35) 100%);
+        pointer-events:none;
+    }
+    .badge{position:absolute;top:10px;font-size:10px;font-weight:800;padding:5px 11px;border-radius:20px;letter-spacing:.4px;z-index:2;box-shadow:0 4px 10px -2px rgba(0,0,0,0.4);}
+    .badge-top{left:10px;background:var(--accent);color:#fff;}
+    .badge-new{right:10px;background:var(--success);color:#062E1F;}
+
+    .car-info{margin-top:13px;flex-grow:1;display:flex;flex-direction:column;gap:9px;padding:0 3px;}
+    .car-title{
+        font-size:15px;font-weight:700;color:#fff;line-height:1.35;
+        display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;
+    }
+    .car-meta{font-size:11.5px;color:var(--text-dim);display:flex;flex-wrap:wrap;gap:0;row-gap:4px;}
+    .car-meta span{display:inline-flex;align-items:center;}
+    .car-meta span:not(:last-child)::after{content:'•';margin:0 6px;color:var(--border-strong);}
+
+    .car-price-box{display:flex;align-items:baseline;gap:8px;font-size:17px;margin-top:1px;}
+    .car-price{font-weight:800;color:#fff;letter-spacing:-.2px;}
+    .car-price.has-sale{text-decoration:line-through;color:var(--text-dim);font-size:12.5px;font-weight:500;}
+    .car-sale-price{font-weight:800;color:var(--accent-2);letter-spacing:-.2px;}
+
+    .car-actions{display:flex;gap:8px;margin-top:4px;}
+    .btn-view{
+        flex-grow:1;background:#fff;color:#0B0F17;border:none;padding:11px;
+        border-radius:11px;font-weight:700;font-size:12.5px;font-family:var(--font);
+        cursor:pointer;transition:.2s;
+    }
+    .btn-view:hover{background:var(--accent);color:#fff;}
+    .btn-whatsapp{
+        width:42px;height:42px;flex-shrink:0;border-radius:11px;border:1px solid var(--border);
+        background:transparent;color:var(--success);display:flex;align-items:center;justify-content:center;
+        cursor:pointer;transition:.2s;font-size:16px;
+    }
+    .btn-whatsapp:hover{border-color:var(--success);background:rgba(52,211,153,0.1);}
+
+    .empty-state{grid-column:1/-1;text-align:center;color:var(--text-dim);padding:60px 0;font-size:15px;}
+
+    /* modal (admin login) */
+    .modal{position:fixed;inset:0;background:rgba(0,0,0,0.65);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;z-index:2000;padding:14px;}
+    .modal.active{display:flex;}
+    .modal-content{
+        background:#10141D;border:1px solid var(--border);
+        padding:28px;border-radius:18px;width:95%;max-width:400px;position:relative;
+    }
+    .modal-title{font-size:20px;font-weight:700;color:#fff;margin-bottom:8px;}
+    .modal-sub{font-size:13px;color:var(--text-dim);margin-bottom:20px;}
+    .modal-close{position:absolute;top:14px;right:14px;font-size:16px;cursor:pointer;background:rgba(255,255,255,0.06);border:none;color:#fff;width:30px;height:30px;border-radius:50px;display:flex;align-items:center;justify-content:center;}
+    .modal-input{
+        width:100%;padding:13px;border:1px solid var(--border);border-radius:10px;
+        margin-bottom:12px;font-family:var(--font);outline:none;background:#0B0F17;color:#fff;font-size:14px;
+    }
+    .modal-input:focus{border-color:var(--accent);}
+    .btn-primary-modal{
+        width:100%;background:var(--accent);color:#fff;border:none;padding:13px;
+        border-radius:10px;font-weight:700;font-size:14px;cursor:pointer;font-family:var(--font);transition:.2s;
+    }
+    .btn-primary-modal:hover{background:#2563EB;}
+
+    /* footer */
+    footer{border-top:1px solid rgba(255,255,255,0.06);background:var(--bg-alt);padding:48px 0 20px;color:var(--text-dim);font-size:13px;position:relative;z-index:1;}
+    .footer-flex{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;}
+    .footer-flex a:hover{color:#fff;}
+</style>
+</head>
+<body>
+
+<div class="glow-bg"></div>
+
+<header>
+    <div class="container header-flex">
+        <button class="burger-menu" id="burgerToggle" aria-label="Menu"><span></span><span></span></button>
+        <div class="logo"><a href="index.html"><span>Your</span>Avto</a></div>
+        <nav class="nav-menu">
+            <a href="ej.html" class="active">Մեքենաներ</a>
+            <a href="index.html#features">Առավելություններ</a>
+        </nav>
+        <div class="header-actions">
+            <a href="https://wa.me/37433488275" target="_blank" rel="noopener noreferrer">+ Վաճառել</a>
+        </div>
+    </div>
+</header>
+
+<div class="mobile-nav-overlay" id="mobileMenu">
+    <ul class="mobile-menu-links">
+        <li><a href="ej.html">Մեքենաներ</a></li>
+        <li><a href="index.html#features">Առավելություններ</a></li>
+    </ul>
+</div>
+
+<main class="container">
+
+    <section class="page-hero">
+        <h1>Բոլոր հասանելի մեքենաները</h1>
+        <p>Ֆիլտրեր օգտագործելով՝ գտիր քո բյուջեին և ճաշակին համապատասխան մեքենան։</p>
+    </section>
+
+    <div class="search-wrap">
+        <input type="text" id="searchInput" placeholder="Որոնել մեքենա, մակնիշ...">
+    </div>
+
+    <div class="filters-responsive">
+        <button class="filter-btn filter-toggle-btn" id="openFilterModalBtn">
+            <span class="filter-icon">▤</span> Ֆիլտր
+            <span class="filter-count-badge" id="filterCountBadge" style="display:none;">0</span>
+        </button>
+    </div>
+
+    <div class="cars-grid" id="cars-container"></div>
+
+</main>
+
+<div class="modal" id="filterModal">
+    <div class="modal-content filter-modal-content">
+        <button class="modal-close" id="closeFilterModalBtn">✕</button>
+        <h3 class="modal-title">Ֆիլտրեր</h3>
+        <p class="modal-sub">Ընտրիր չափանիշները քեզ հարմար մեքենան գտնելու համար։</p>
+
+        <div class="filter-group">
+            <div class="filter-group-label">Վառելիք</div>
+            <div class="filter-chip-row">
+                <button class="filter-btn active" data-filter="all">Բոլորը</button>
+                <button class="filter-btn" data-filter="Բենզին">Բենզին</button>
+                <button class="filter-btn" data-filter="Դիզել">Դիզել</button>
+                <button class="filter-btn" data-filter="Հիբրիդ">Հիբրիդ</button>
+                <button class="filter-btn" data-filter="Էլեկտրական">Էլեկտրական</button>
+            </div>
+        </div>
+
+        <div class="filter-group">
+            <div class="filter-group-label">Մակնիշ</div>
+            <select id="brandFilter" class="filter-select filter-select-full">
+                <option value="all">Բոլոր Մակնիշները</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <div class="filter-group-label">Տարեթիվ</div>
+            <select id="yearFilter" class="filter-select filter-select-full">
+                <option value="all">Բոլոր Տարիները</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <div class="filter-group-label">Վազք (նվազագույնը)</div>
+            <select id="mileageFilter" class="filter-select filter-select-full">
+                <option value="all">Բոլորը</option>
+                <option value="10000">10.000+</option>
+                <option value="50000">50.000+</option>
+                <option value="100000">100.000+</option>
+                <option value="200000">200.000+</option>
+                <option value="500000">500.000+</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <div class="filter-group-label">Գին</div>
+            <select id="priceSort" class="filter-select filter-select-full">
+                <option value="default">Առանց դասավորության</option>
+                <option value="asc">Աճման</option>
+                <option value="desc">Նվազման</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <button class="filter-btn" id="newOnlyBtn" style="width:100%;">✨ Միայն Նորույթները</button>
+        </div>
+
+        <div class="filter-modal-actions">
+            <button class="btn-secondary-modal" id="resetFiltersBtn">Մաքրել</button>
+            <button class="btn-primary-modal" id="applyFiltersBtn">Կիրառել</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="adminLoginModal">
+    <div class="modal-content">
+        <button class="modal-close" id="closeAdminModalBtn">✕</button>
+        <h3 class="modal-title">Մուտք Ադմին Համակարգ</h3>
+        <p class="modal-sub">Մուտք գործելու համար ներմուծեք ձեր տվյալները։</p>
+        <input type="email" id="adminEmailInput" class="modal-input" placeholder="Էլ. հասցե (Email)...">
+        <input type="password" id="adminPassInput" class="modal-input" placeholder="Գաղտնաբառ...">
+        <button id="adminLoginBtn" class="btn-primary-modal">Մուտք Գործել</button>
+    </div>
+</div>
+
+<footer>
+    <div class="container footer-flex">
+        <div><span style="color:#fff;font-weight:800;">Your</span>Avto</div>
+        <div style="display:flex;gap:20px;flex-wrap:wrap;">
+            <a href="https://wa.me/37433488275" target="_blank" rel="noopener noreferrer">+374 33 488275</a>
+            <a href="mailto:regiscode.am@gmail.com">regiscode.am@gmail.com</a>
+            <a href="og.html">Օգտագործման պայմաններ</a>
+        </div>
+        <p>&copy; 2026 YourAvto</p>
+    </div>
+</footer>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, query, orderByKey, limitToFirst, startAfter, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyDO6yNLdh3_FVWi2z5PjT9TFKiqsmyWPQk",
+    authDomain: "youravto-78adb.firebaseapp.com",
+    // ─── Realtime Database-ը պետք է միացված լինի Firebase Console-ում
+    // (Build → Realtime Database → Create Database). Եթե տարբեր տարածաշրջան
+    // ես ընտրել ստեղծելիս, URL-ը կարող է այլ վերջածանց ունենալ
+    // (օր. .europe-west1.firebasedatabase.app) — ստուգիր Console-ում ──────
+    databaseURL: "https://youravto-78adb-default-rtdb.firebaseio.com",
+    projectId: "youravto-78adb",
+    storageBucket: "youravto-78adb.firebasestorage.app",
+    messagingSenderId: "230081951776",
+    appId: "1:230081951776:web:92817dac120d4bf63b6445",
+    measurementId: "G-4BTTWRRDPS"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const auth = getAuth(app);
+
+const WHATSAPP_NUMBER = "37433488275";
+
+let allCars = [];
+let activeFuel = 'all';
+let activeBrand = 'all';
+let activeYear = 'all';
+let activeMileage = 'all';
+let activeNewOnly = false;
+const knownBrands = new Set();
+const knownYears = new Set();
+
+document.getElementById('burgerToggle').addEventListener('click', function(){
+    this.classList.toggle('open');
+    document.getElementById('mobileMenu').classList.toggle('open');
+});
+
+function normalizeImages(car){
+    let imgs = car.images;
+    if (imgs && !Array.isArray(imgs) && typeof imgs === 'object') imgs = Object.values(imgs);
+    if (!Array.isArray(imgs)) imgs = [];
+    imgs = imgs.filter(u => typeof u === 'string' && u.trim() !== '');
+    if (imgs.length === 0 && car.img && car.img.trim() !== '') imgs = [car.img];
+    return imgs;
+}
+
+function cloudinaryThumb(url, width){
+    if (!url || url.indexOf('/upload/') === -1) return url;
+    return url.replace(/\/upload\/[^/]+\//, `/upload/f_auto,q_auto:eco,w_${width},c_limit/`);
+}
+
+function effectivePrice(car){
+    return (car.salePrice && Number(car.salePrice) > 0) ? Number(car.salePrice) : Number(car.price || 0);
+}
+
+function buildPriceHTML(car){
+    if (car.salePrice && Number(car.salePrice) > 0){
+        return `<span class="car-price has-sale">${Number(car.price).toLocaleString('hy-AM')} AMD</span><span class="car-sale-price">${Number(car.salePrice).toLocaleString('hy-AM')} AMD</span>`;
+    }
+    return `<span class="car-price">${Number(car.price||0).toLocaleString('hy-AM')} AMD</span>`;
+}
+
+function buildMetaHTML(car){
+    const parts = [];
+    if (car.year) parts.push(`<span>${car.year}</span>`);
+    if (car.mileage) parts.push(`<span>${Number(car.mileage).toLocaleString('hy-AM')} կմ</span>`);
+    if (car.fuel) parts.push(`<span>${car.fuel}</span>`);
+    if (car.transmission) parts.push(`<span>${car.transmission}</span>`);
+    return parts.join('');
+}
+
+function matchesActiveFilters(c){
+    if (c.inStock === false) return false;
+    if (activeFuel !== 'all' && (c.fuel || '') !== activeFuel) return false;
+    if (activeBrand !== 'all' && (c.brand || '') !== activeBrand) return false;
+    if (activeYear !== 'all' && String(c.year || '') !== activeYear) return false;
+    if (activeMileage !== 'all' && Number(c.mileage || 0) < Number(activeMileage)) return false;
+    if (activeNewOnly && !c.isNew) return false;
+    return true;
+}
+
+function countActiveFilters(){
+    let n = 0;
+    if (activeFuel !== 'all') n++;
+    if (activeBrand !== 'all') n++;
+    if (activeYear !== 'all') n++;
+    if (activeMileage !== 'all') n++;
+    if (activeNewOnly) n++;
+    return n;
+}
+
+function updateFilterBadge(){
+    const badge = document.getElementById('filterCountBadge');
+    const n = countActiveFilters();
+    if (n > 0){
+        badge.style.display = 'flex';
+        badge.innerText = n;
+    } else {
+        badge.style.display = 'none';
+    }
+}
+
+function registerBrandAndYear(c){
+    if (c.brand && !knownBrands.has(c.brand)){
+        knownBrands.add(c.brand);
+        const opt = document.createElement('option');
+        opt.value = c.brand; opt.text = c.brand;
+        document.getElementById('brandFilter').appendChild(opt);
+    }
+    if (c.year && !knownYears.has(String(c.year))){
+        knownYears.add(String(c.year));
+        const opt = document.createElement('option');
+        opt.value = String(c.year); opt.text = c.year;
+        document.getElementById('yearFilter').appendChild(opt);
+    }
+}
+
+function applySort(list){
+    const sortValue = document.getElementById('priceSort').value;
+    if (sortValue === 'asc') list.sort((a,b) => effectivePrice(a) - effectivePrice(b));
+    else if (sortValue === 'desc') list.sort((a,b) => effectivePrice(b) - effectivePrice(a));
+    return list;
+}
+
+function refreshDisplay(){
+    updateFilterBadge();
+    const q = document.getElementById('searchInput').value.toLowerCase().trim();
+    if (q === ''){
+        isSearchMode = false;
+        renderCars(applySort(allCars.filter(matchesActiveFilters)));
+    } else {
+        isSearchMode = true;
+        searchCars();
+    }
+}
+
+function goToCar(car){
+    if (!car.id) return;
+    window.location.href = `avt.html?id=${encodeURIComponent(car.id)}`;
+}
+
+function contactAboutCar(e, car){
+    e.stopPropagation();
+    const number = car.phone || WHATSAPP_NUMBER;
+    const text = encodeURIComponent(`Բարև ձեզ, հետաքրքրված եմ ${car.brand || ''} ${car.model || ''} (${car.year || ''}) մեքենայով։`);
+    window.open(`https://wa.me/${number}?text=${text}`, '_blank');
+}
+
+function renderCars(cars){
+    const container = document.getElementById('cars-container');
+    container.innerHTML = '';
+    if (cars.length === 0){
+        container.innerHTML = '<p class="empty-state">Մեքենա չի գտնվել</p>';
+        return;
+    }
+    cars.forEach(car => {
+        const images = normalizeImages(car);
+        const thumbSrc = cloudinaryThumb(images[0], 500);
+        const pinnedBadge = car.pinned ? `<span class="badge badge-top">TOP</span>` : '';
+        const newBadge = car.isNew ? `<span class="badge badge-new">NEW</span>` : '';
+        const card = document.createElement('div');
+        card.className = 'car-card';
+        card.innerHTML = `
+            <div class="car-img-wrap">
+                ${pinnedBadge}${newBadge}
+                <img src="${thumbSrc || ''}" loading="lazy" alt="${car.brand || ''} ${car.model || ''}">
+            </div>
+            <div class="car-info">
+                <div>
+                    <div class="car-title">${car.brand || ''} ${car.model || ''}</div>
+                    <div class="car-meta">${buildMetaHTML(car)}</div>
+                </div>
+                <div class="car-price-box">${buildPriceHTML(car)}</div>
+                <div class="car-actions">
+                    <button class="btn-view">Մանրամասն</button>
+                    <button class="btn-whatsapp" title="Կապ WhatsApp-ով">↗</button>
+                </div>
+            </div>
+        `;
+        card.addEventListener('click', () => goToCar(car));
+        card.querySelector('.btn-whatsapp').addEventListener('click', (e) => contactAboutCar(e, car));
+        container.appendChild(card);
+    });
+}
+
+let lastLoadedKey = null;
+let isLoadingCars = false;
+let allLoaded = false;
+const CARS_LIMIT = 20;
+const carsRef = ref(db, 'cars');
+let allCarsCache = null;
+let isSearchMode = false;
+
+async function loadCarsPage(){
+    if (isSearchMode) return;
+    if (isLoadingCars || allLoaded) return;
+    isLoadingCars = true;
+
+    let dbQuery;
+    if (!lastLoadedKey){
+        dbQuery = query(carsRef, orderByKey(), limitToFirst(CARS_LIMIT));
+    } else {
+        dbQuery = query(carsRef, orderByKey(), startAfter(lastLoadedKey), limitToFirst(CARS_LIMIT));
+    }
+
+    try{
+        const snapshot = await get(dbQuery);
+        if (snapshot.exists()){
+            const data = snapshot.val();
+            const keys = Object.keys(data);
+            if (keys.length < CARS_LIMIT) allLoaded = true;
+            lastLoadedKey = keys[keys.length - 1];
+
+            let newCars = keys.map(key => ({ id: key, ...data[key] })).filter(c => c.inStock !== false);
+
+            allCars = allCars.concat(newCars);
+            allCars.sort((a,b) => (b.pinned === true ? 1 : 0) - (a.pinned === true ? 1 : 0));
+            newCars.forEach(registerBrandAndYear);
+            refreshDisplay();
+        } else {
+            allLoaded = true;
+            renderCars([]);
+        }
+    } catch(err){
+        console.error("Error fetching cars:", err);
+    } finally {
+        isLoadingCars = false;
+    }
+}
+
+window.addEventListener('scroll', () => {
+    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 600) loadCarsPage();
+});
+
+loadCarsPage();
+
+document.querySelectorAll('.filter-btn[data-filter]').forEach(btn => {
+    btn.addEventListener('click', () => {
+        activeFuel = btn.dataset.filter;
+        document.querySelectorAll('.filter-btn[data-filter]').forEach(b => b.classList.toggle('active', b.dataset.filter === activeFuel));
+        refreshDisplay();
+    });
+});
+
+document.getElementById('newOnlyBtn').addEventListener('click', function(){
+    activeNewOnly = !activeNewOnly;
+    this.classList.toggle('active', activeNewOnly);
+    refreshDisplay();
+});
+
+document.getElementById('brandFilter').addEventListener('change', function(){ activeBrand = this.value; refreshDisplay(); });
+document.getElementById('yearFilter').addEventListener('change', function(){ activeYear = this.value; refreshDisplay(); });
+document.getElementById('mileageFilter').addEventListener('change', function(){ activeMileage = this.value; refreshDisplay(); });
+document.getElementById('priceSort').addEventListener('change', refreshDisplay);
+
+// ─── Ֆիլտրերի մոդալ պատուհան ─────────────────────────────────────────
+const filterModal = document.getElementById('filterModal');
+document.getElementById('openFilterModalBtn').addEventListener('click', () => filterModal.classList.add('active'));
+document.getElementById('closeFilterModalBtn').addEventListener('click', () => filterModal.classList.remove('active'));
+document.getElementById('applyFiltersBtn').addEventListener('click', () => filterModal.classList.remove('active'));
+window.addEventListener('click', (e) => { if (e.target === filterModal) filterModal.classList.remove('active'); });
+
+document.getElementById('resetFiltersBtn').addEventListener('click', () => {
+    activeFuel = 'all'; activeBrand = 'all'; activeYear = 'all'; activeMileage = 'all'; activeNewOnly = false;
+    document.querySelectorAll('.filter-btn[data-filter]').forEach(b => b.classList.toggle('active', b.dataset.filter === 'all'));
+    document.getElementById('newOnlyBtn').classList.remove('active');
+    document.getElementById('brandFilter').value = 'all';
+    document.getElementById('yearFilter').value = 'all';
+    document.getElementById('mileageFilter').value = 'all';
+    document.getElementById('priceSort').value = 'default';
+    refreshDisplay();
+});
+
+async function searchCars(){
+    let input = document.getElementById('searchInput').value.toLowerCase().trim();
+    if (input === ''){
+        lastLoadedKey = null; allLoaded = false; isSearchMode = false; allCars = [];
+        loadCarsPage();
+        return;
+    }
+    isSearchMode = true;
+    if (!allCarsCache){
+        try{
+            const snapshot = await get(carsRef);
+            allCarsCache = snapshot.val() || {};
+            Object.keys(allCarsCache).forEach(key => registerBrandAndYear(allCarsCache[key]));
+        } catch(err){
+            console.error("Search error:", err);
+            return;
+        }
+    }
+    const matched = Object.keys(allCarsCache)
+        .map(key => ({ id: key, ...allCarsCache[key] }))
+        .filter(c => {
+            if (!matchesActiveFilters(c)) return false;
+            const brand = (c.brand || '').toLowerCase();
+            const model = (c.model || '').toLowerCase();
+            const desc = (c.bio || '').toLowerCase();
+            return brand.includes(input) || model.includes(input) || desc.includes(input);
+        });
+    renderCars(applySort(matched));
+}
+
+document.getElementById('searchInput').addEventListener('keyup', searchCars);
+
+// ─── Ադմին մուտք (գաղտնի՝ լոգոյի կրկնակի սեղմումով) ─────────────────────
+const adminModal = document.getElementById('adminLoginModal');
+let logoClickCount = 0, logoClickTimer = null;
+document.querySelector('.logo').addEventListener('click', (e) => {
+    e.preventDefault();
+    logoClickCount++;
+    clearTimeout(logoClickTimer);
+    logoClickTimer = setTimeout(() => { logoClickCount = 0; }, 600);
+    if (logoClickCount >= 2){
+        adminModal.classList.add('active');
+        logoClickCount = 0;
+    } else {
+        window.location.href = "index.html";
+    }
+});
+document.getElementById('closeAdminModalBtn').addEventListener('click', () => adminModal.classList.remove('active'));
+window.addEventListener('click', (e) => { if (e.target === adminModal) adminModal.classList.remove('active'); });
+
+document.getElementById('adminLoginBtn').addEventListener('click', checkAdminPass);
+document.getElementById('adminPassInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') checkAdminPass(); });
+
+function checkAdminPass(){
+    const email = document.getElementById('adminEmailInput').value.trim();
+    const password = document.getElementById('adminPassInput').value.trim();
+    // ─── Փոխարինիր քո ադմինի էլ. հասցեով ───
+    const ADMIN_EMAIL = "your-admin-email@gmail.com";
+
+    if (!email || !password){ alert("Խնդրում ենք լրացնել բոլոր դաշտերը։"); return; }
+    if (email !== ADMIN_EMAIL){ alert("Այս էլ. հասցեն չունի ադմինիստրատորի իրավունքներ։"); return; }
+
+    signInWithEmailAndPassword(auth, email, password)
+        .then(() => { window.location.href = "admin.html"; })
+        .catch((error) => {
+            console.error("Auth Error:", error.code);
+            if (['auth/invalid-credential','auth/wrong-password','auth/user-not-found'].includes(error.code)){
+                alert("Սխալ էլ. հասցե կամ գաղտնաբառ։");
+            } else {
+                alert("Մուտքի սխալ. " + error.message);
+            }
+        });
+}
+</script>
+</body>
+</html>
