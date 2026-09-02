@@ -345,7 +345,6 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, onValue, push, update, remove, query, orderByKey, limitToLast, endBefore, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-import { getStorage, ref as storageRef, uploadBytesResumable, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -361,8 +360,11 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
-const storage = getStorage(app);
 const auth = getAuth(app);
+
+// ─── Cloudinary — նկարների պահպանման համար (փոխարինում է Firebase Storage-ին) ─
+const CLOUD_NAME = "jen1qefq";
+const UPLOAD_PRESET = "youravto";
 
 // ─── Ադմինի պաշտպանություն. պետք է համընկնի ej.html-ի ADMIN_EMAIL-ի հետ ───
 const ADMIN_EMAIL = "your-admin-email@gmail.com";
@@ -489,43 +491,57 @@ function compressImageFile(file, maxWidth = 1200, quality = 0.8) {
     });
 }
 
-async function uploadToFirebaseStorage(file, progressBarId, progressTextId) {
+/**
+ * Սեղմում է նկարը (browser-ում) և վերբեռնում Cloudinary-ում՝ unsigned upload
+ * preset-ով (XHR, որ progress-ը հասանելի լինի)։ Վերադարձնում է secure_url-ը։
+ */
+async function uploadToCloudinary(file, progressBarId, progressTextId) {
     let uploadFile = file;
     try { uploadFile = await compressImageFile(file, 1200, 0.8); }
     catch (err) { console.warn('Սեղմումը ձախողվեց, վերբեռնում ենք original-ը.', err); }
 
-    const safeName = uploadFile.name.replace(/[^a-zA-Z0-9.\-_]/g, '_');
-    const path = `cars/${Date.now()}_${Math.random().toString(36).slice(2, 8)}_${safeName}`;
-    const fileRef = storageRef(storage, path);
-    const uploadTask = uploadBytesResumable(fileRef, uploadFile);
+    const formData = new FormData();
+    formData.append('file', uploadFile);
+    formData.append('upload_preset', UPLOAD_PRESET);
 
     return new Promise((resolve, reject) => {
-        uploadTask.on('state_changed',
-            (snapshot) => {
-                if (progressBarId) {
-                    const pct = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-                    const bar = document.getElementById(progressBarId);
-                    const text = document.getElementById(progressTextId);
-                    if (bar) bar.style.width = pct + "%";
-                    if (text) text.innerText = `Վերբեռնվում է... ${pct}%`;
-                }
-            },
-            (error) => reject(new Error("Storage upload failed: " + error.message)),
-            async () => {
-                try { resolve(await getDownloadURL(uploadTask.snapshot.ref)); }
-                catch (err) { reject(err); }
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`);
+
+        xhr.upload.onprogress = (e) => {
+            if (progressBarId && e.lengthComputable) {
+                const pct = Math.round((e.loaded / e.total) * 100);
+                const bar = document.getElementById(progressBarId);
+                const text = document.getElementById(progressTextId);
+                if (bar) bar.style.width = pct + "%";
+                if (text) text.innerText = `Վերբեռնվում է... ${pct}%`;
             }
-        );
+        };
+
+        xhr.onload = () => {
+            if (xhr.status >= 200 && xhr.status < 300) {
+                try {
+                    const data = JSON.parse(xhr.responseText);
+                    resolve(data.secure_url);
+                } catch (err) {
+                    reject(new Error('Cloudinary պատասխանը վերծանել չհաջողվեց'));
+                }
+            } else {
+                reject(new Error('Cloudinary upload failed: ' + xhr.status + ' ' + xhr.responseText));
+            }
+        };
+        xhr.onerror = () => reject(new Error('Cloudinary-ի հետ կապի սխալ (ցանց)'));
+        xhr.send(formData);
     });
 }
 
-async function uploadMultipleToFirebaseStorage(files, progressBarId, progressTextId) {
+async function uploadMultipleToCloudinary(files, progressBarId, progressTextId) {
     const urls = [];
     const total = files.length;
     for (let i = 0; i < total; i++) {
         const text = document.getElementById(progressTextId);
         if (text) text.innerText = `Նկար ${i + 1}/${total}...`;
-        urls.push(await uploadToFirebaseStorage(files[i], progressBarId, progressTextId));
+        urls.push(await uploadToCloudinary(files[i], progressBarId, progressTextId));
         const bar = document.getElementById(progressBarId);
         if (bar) bar.style.width = Math.round(((i + 1) / total) * 100) + '%';
         if (text) text.innerText = `Նկար ${i + 1}/${total} ✓`;
@@ -533,10 +549,17 @@ async function uploadMultipleToFirebaseStorage(files, progressBarId, progressTex
     return urls;
 }
 
+/**
+ * Cloudinary-ից նկար ջնջելը client-side հնարավոր չէ առանց API Secret-ի
+ * (unsigned preset-ը թույլ չի տալիս destroy-ի կանչեր)։ Այս ֆունկցիան
+ * միայն հեռացնում է URL-ը Database-ից. բուն ֆայլը կմնա Cloudinary-ում
+ * («որբ» ֆայլ)։ Եթե ուզում ես իրական ջնջում, պետք է սեփական backend/
+ * Cloud Function՝ Admin API-ով, կամ պարբերաբար մաքրիր Cloudinary Media
+ * Library-ից ձեռքով («Unused assets» ֆիլտրով)։
+ */
 async function deleteFromStorage(url) {
     if (!url || typeof url !== 'string') return;
-    try { await deleteObject(storageRef(storage, url)); }
-    catch (err) { console.warn('Storage delete-ը ձախողվեց (հավանաբար արդեն ջնջված է):', err.message); }
+    console.info('Ուշադրություն. Cloudinary ֆայլը ինքնաշխատ չի ջնջվում (պահանջում է server-side Admin API):', url);
 }
 
 // ─── Stock toggle ────────────────────────────────────────────────────────
@@ -697,7 +720,7 @@ document.getElementById('addCarBtn').addEventListener('click', async () => {
         document.getElementById('carProgressBar').style.width = '0%';
 
         try {
-            const imageUrls = await uploadMultipleToFirebaseStorage(files, 'carProgressBar', 'carProgressText');
+            const imageUrls = await uploadMultipleToCloudinary(files, 'carProgressBar', 'carProgressText');
             const newCar = {
                 brand, model,
                 year: year ? Number(year) : '',
@@ -782,7 +805,7 @@ document.getElementById('saveCarBtn').addEventListener('click', async () => {
             saveBtn.disabled = true;
             for (let i = 0; i < newFiles.length; i++) {
                 saveBtn.innerText = `Նկարներ վերբեռնվում են... (${i + 1}/${newFiles.length})`;
-                finalImages.push(await uploadToFirebaseStorage(newFiles[i], null, null));
+                finalImages.push(await uploadToCloudinary(newFiles[i], null, null));
             }
         }
         saveBtn.innerText = 'Պահպանվում է...';
