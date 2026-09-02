@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="hy">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Օգտագործման Պայմաններ & Տեղեկություն - YourAvto</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0B0F17;
+            color: #F3F4F6;
+            overflow-x: hidden;
+        }
+
+        .glow-bg {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 1000px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.12) 0%, rgba(139, 92, 246, 0.05) 40%, rgba(11, 15, 23, 0) 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .card-glow {
+            position: relative;
+        }
+        .card-glow::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: 1.5rem;
+            padding: 1px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.02));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0B0F17;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1F2937;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #374151;
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .reveal-delay-1 { transition-delay: 0.15s; }
+        .reveal-delay-2 { transition-delay: 0.3s; }
+    </style>
+</head>
+<body class="antialiased selection:bg-blue-600 selection:text-white flex flex-col min-h-screen">
+
+    <!-- Ambient Background Glow -->
+    <div class="glow-bg"></div>
+
+    <!-- Header / Navigation -->
+    <header class="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-opacity-70 bg-[#0B0F17] border-b border-gray-800/50">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <a href="index.html" class="text-2xl font-extrabold tracking-wider text-white flex items-center gap-1">
+                <span class="text-blue-500">Your</span>Avto
+            </a>
+            
+            <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-400">
+                <a href="index.html" class="hover:text-white transition-colors">Գլխավոր</a>
+                <a href="ej.html" class="hover:text-white transition-colors">Մեքենաներ</a>
+            </nav>
+
+            <div class="flex items-center gap-4">
+                <a href="https://wa.me/37433488275" target="_blank" rel="noopener noreferrer" class="px-5 py-2.5 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 rounded-xl transition-all duration-300 shadow-lg shadow-blue-600/20 hover:shadow-blue-500/30 flex items-center gap-2">
+                    + Վաճառել
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="pt-32 pb-24 flex-grow px-6">
+        <div class="max-w-4xl mx-auto">
+            
+            <!-- Hero Title Area -->
+            <div class="text-center mb-16">
+                <div class="reveal inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-xs font-semibold tracking-wide text-blue-400 mb-6 backdrop-blur-sm">
+                    Օգտագործման Պայմաններ & Առավելություններ
+                </div>
+                <h1 class="reveal reveal-delay-1 text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight mb-6">
+                    Պարզ, Արագ և <span class="bg-gradient-to-r from-blue-400 to-indigo-300 bg-clip-text text-transparent">Շահավետ</span> Պայմաններ
+                </h1>
+                <p class="reveal reveal-delay-2 text-gray-400 text-lg max-w-2xl mx-auto">
+                    Ծանոթացեք YourAvto հարթակի աշխատանքի սկզբունքներին, գնորդների և վաճառողների համար նախատեսված բացառիկ հնարավորություններին:
+                </p>
+            </div>
+
+            <!-- Content Cards Grid -->
+            <div class="space-y-10">
+
+                <!-- 1. Gtnely (Buying) Card -->
+                <div class="reveal card-glow p-8 sm:p-10 rounded-3xl bg-gray-900/40 border border-gray-800/80 backdrop-blur-sm">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-12 h-12 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 shrink-0">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-bold text-white">Անհավանական հեշտ է գտնել երազանքի մեքենան</h2>
+                            <p class="text-sm text-gray-400">Գնորդների համար</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-300 leading-relaxed font-normal mb-4">
+                        YourAvto հարթակը ստեղծված է այնպես, որ դուք վայրկյանների ընթացքում գտնեք ձեր բյուջեին և նախասիրություններին համապատասխան ավտոմեքենա: Մեր ճկուն ֆիլտրերը թույլ են տալիս տեսնել միայն համապատասխան հայտարարությունները՝ առանց ավելորդ ժամանակ կորցնելու:
+                    </p>
+                    <ul class="space-y-3 text-sm text-gray-400">
+                        <li class="flex items-center gap-3">
+                            <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                            Ուղիղ կապ սեփականատիրոջ հետ՝ առանց միջնորդների
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                            Թափանցիկ և ստուգված տեղեկատվություն մեքենայի վերաբերյալ
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                            Անվճար որոնում և հարմարավետ ինտերֆեյս
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 2. Vacharely (Selling) Banner Card - Highlighted -->
+                <div class="reveal card-glow p-8 sm:p-10 rounded-3xl bg-gradient-to-b from-blue-950/30 via-gray-900/50 to-gray-900/40 border border-blue-500/30 backdrop-blur-sm relative overflow-hidden">
+                    <div class="absolute -right-10 -bottom-10 w-60 h-60 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
+                    
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-bold text-white">Ամենաշահավետ պայմանները վաճառողների համար</h2>
+                            <p class="text-sm text-emerald-400 font-semibold">Ընդամենը $10 • Առանց միջնորդավճարների</p>
+                        </div>
+                    </div>
+
+                    <p class="text-gray-300 leading-relaxed font-normal mb-6">
+                        Տեղադրեք ձեր մեքենայի հայտարարությունը YourAvto-ում ընդամենը <strong class="text-white font-bold">$10</strong> միանվագ վճարով: Մենք չենք պահանջում ոչ մի տոկոս կամ հավելյալ միջնորդավճար վաճառքից հետո. ամբողջ գումարը մնում է ձեզ:
+                    </p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+                        <div class="p-5 rounded-2xl bg-gray-950/60 border border-gray-800">
+                            <div class="text-xl font-bold text-blue-400 mb-1">Կայքում տեղադրում</div>
+                            <p class="text-xs text-gray-400">Ձեր մեքենան հասանելի կլինի հազարավոր ակտիվ գնորդների համար կայքի առաջնային հատվածում:</p>
+                        </div>
+                        <div class="p-5 rounded-2xl bg-gray-950/60 border border-gray-800">
+                            <div class="text-xl font-bold text-indigo-400 mb-1">Instagram Գովազդ</div>
+                            <p class="text-xs text-gray-400">Մենք պարբերաբար կհրապարակենք ձեր մեքենան մեր Instagram-ի էջում, որպեսզի վաճառքը տեղի ունենա առավելագույնս արագ:</p>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-gray-800">
+                        <span class="text-sm text-gray-400">Ցանկանո՞ւմ եք տեղադրել հայտարարություն հիմա:</span>
+                        <a href="https://wa.me/37433488275" target="_blank" rel="noopener noreferrer" class="w-full sm:w-auto px-8 py-3.5 text-sm font-bold text-white bg-blue-600 hover:bg-blue-500 rounded-xl transition-all duration-300 shadow-lg shadow-blue-600/25 text-center">
+                            Կապ հաստատել WhatsApp-ով
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 3. General Terms & Rules -->
+                <div class="reveal card-glow p-8 sm:p-10 rounded-3xl bg-gray-900/40 border border-gray-800/80 backdrop-blur-sm">
+                    <h2 class="text-2xl font-bold text-white mb-6">Ընդհանուր դրույթներ</h2>
+                    <div class="space-y-4 text-gray-300 text-sm leading-relaxed">
+                        <p>
+                            1. <strong>Տեղեկատվության ճշգրտություն.</strong> Վաճառողը պատասխանատվություն է կրում տրամադրված տվյալների և տրանսպորտային միջոցի իրական վիճակի համապատասխանության համար:
+                        </p>
+                        <p>
+                            2. <strong>Գործարքների իրականացում.</strong> YourAvto հարթակը հանդիսանում է տեղեկատվական հարթակ և անմիջական մասնակցություն չի ունենում գնորդի և վաճառողի միջև ֆինանսական գործարքներին:
+                        </p>
+                        <p>
+                            3. <strong>Աջակցություն.</strong> Հարցերի կամ առաջարկությունների դեպքում կարող եք կապ հաստատել մեր աջակցման թիմի հետ նշված էլ. փոստով կամ հեռախոսահամարով:
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-gray-900 py-12 px-6 bg-[#080B11] text-gray-500 text-sm mt-auto">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="flex flex-col sm:flex-row items-center gap-4">
+                <a href="index.html" class="font-bold text-white text-lg">
+                    <span class="text-blue-500">Your</span>Avto
+                </a>
+                <span class="hidden sm:inline text-gray-700">|</span>
+                <a href="https://wa.me/37433488275" target="_blank" rel="noopener noreferrer" class="hover:text-gray-300 transition-colors">
+                    +374 33 488275
+                </a>
+                <span class="hidden sm:inline text-gray-700">|</span>
+                <a href="mailto:regiscode.am@gmail.com" class="hover:text-gray-300 transition-colors">
+                    regiscode.am@gmail.com
+                </a>
+            </div>
+            <div class="flex items-center gap-6">
+                <a href="og.html" class="text-blue-400 font-medium hover:underline">Օգտագործման պայմաններ</a>
+                <p class="text-xs text-gray-600">© 2026 YourAvto</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scroll Reveal JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const reveals = document.querySelectorAll('.reveal');
+
+            const revealOnScroll = () => {
+                const windowHeight = window.innerHeight;
+                const elementVisible = 60;
+
+                reveals.forEach((element) => {
+                    const elementTop = element.getBoundingClientRect().top;
+                    if (elementTop < windowHeight - elementVisible) {
+                        element.classList.add('active');
+                    }
+                });
+            };
+
+            window.addEventListener('scroll', revealOnScroll);
+            revealOnScroll();
+        });
+    </script>
+</body>
+</html>
