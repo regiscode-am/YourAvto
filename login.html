@@ -36,8 +36,8 @@
   </div>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDO6yNLdh3_FVWi2z5PjT9TFKiqsmyWPQk",
@@ -53,7 +53,7 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    // Եթե արդեն մուտք է գործած, անմիջապես տանել adm.html
+    // Եթե արդեն մուտք է գործած, անմիջապես տանել admin.html
     onAuthStateChanged(auth, (user) => {
       if (user) {
         window.location.href = "admin.html";
