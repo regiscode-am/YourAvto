@@ -230,7 +230,7 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <input type="number" id="carPrice" class="form-input" placeholder="Գին (AMD)...">
+                    <input type="number" id="carPrice" class="form-input" placeholder="Գին (USD)...">
                     <input type="number" id="carSalePrice" class="form-input" placeholder="Զեղչված գին (ոչ պարտադիր)...">
                 </div>
                 <div class="form-group">
@@ -315,7 +315,7 @@
             </div>
         </div>
         <div class="edit-form-row">
-            <div class="edit-form-group"><label>Գին (AMD)</label><input type="number" id="editCarPrice"></div>
+            <div class="edit-form-group"><label>Գին (USD)</label><input type="number" id="editCarPrice"></div>
             <div class="edit-form-group"><label>Զեղչված գին</label><input type="number" id="editCarSalePrice"></div>
         </div>
         <div class="edit-form-group">
@@ -459,9 +459,9 @@ function normalizeImages(c) {
 
 function priceText(c) {
     if (c.salePrice && Number(c.salePrice) > 0) {
-        return `${Number(c.salePrice).toLocaleString('hy-AM')} AMD (հին՝ ${Number(c.price).toLocaleString('hy-AM')} AMD)`;
+        return `$${Number(c.salePrice).toLocaleString('en-US')} (հին՝ $${Number(c.price).toLocaleString('en-US')})`;
     }
-    return `${Number(c.price || 0).toLocaleString('hy-AM')} AMD`;
+    return `$${Number(c.price || 0).toLocaleString('en-US')}`;
 }
 
 function compressImageFile(file, maxWidth = 1200, quality = 0.8) {
@@ -883,7 +883,7 @@ function renderOrderCards(items) {
 
         const bTotal = document.createElement('span');
         bTotal.className = 'order-total';
-        bTotal.textContent = `${Number(o.total || 0).toLocaleString('hy-AM')} AMD`;
+        bTotal.textContent = `$${Number(o.total || 0).toLocaleString('en-US')}`;
 
         const btn = document.createElement('button');
         btn.className = 'btn-complete';
