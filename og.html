@@ -69,6 +69,46 @@
         }
         .reveal-delay-1 { transition-delay: 0.15s; }
         .reveal-delay-2 { transition-delay: 0.3s; }
+
+        /* Mobile Burger Menu */
+        .burger-menu {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 20px;
+            height: 13px;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        .burger-menu span {
+            display: block;
+            width: 100%;
+            height: 2px;
+            background: #fff;
+            transition: .3s;
+        }
+        .burger-menu.open span:nth-child(1) { transform: translateY(5.5px) rotate(45deg); }
+        .burger-menu.open span:nth-child(2) { transform: rotate(-45deg) translateY(-5.5px); }
+
+        .mobile-nav-overlay {
+            position: fixed;
+            inset: 0;
+            background: #0B0F17;
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform: translateY(-100%);
+            transition: transform .5s cubic-bezier(.77,0,.175,1);
+        }
+        .mobile-nav-overlay.open { transform: translateY(0); }
+        .mobile-menu-links li { margin: 22px 0; text-align: center; }
+        .mobile-menu-links a { font-size: 24px; font-weight: 700; color: #fff; }
+
+        @media (min-width: 768px) {
+            .burger-menu { display: none; }
+        }
     </style>
 </head>
 <body class="antialiased selection:bg-blue-600 selection:text-white flex flex-col min-h-screen">
@@ -76,9 +116,21 @@
     <!-- Ambient Background Glow -->
     <div class="glow-bg"></div>
 
+    <!-- Mobile Nav Overlay -->
+    <div class="mobile-nav-overlay" id="mobileMenu">
+        <ul class="mobile-menu-links">
+            <li><a href="index.html">Գլխավոր</a></li>
+            <li><a href="ej.html">Մեքենաներ</a></li>
+        </ul>
+    </div>
+
     <!-- Header / Navigation -->
     <header class="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-opacity-70 bg-[#0B0F17] border-b border-gray-800/50">
         <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-4 md:hidden">
+                <button class="burger-menu" id="burgerToggle" aria-label="Menu"><span></span><span></span></button>
+            </div>
+
             <a href="index.html" class="text-2xl font-extrabold tracking-wider text-white flex items-center gap-1">
                 <span class="text-blue-500">Your</span>Avto
             </a>
@@ -88,12 +140,12 @@
                 <a href="ej.html" class="hover:text-white transition-colors">Մեքենաներ</a>
             </nav>
 
-            <div class="flex items-center gap-4">
-                <a href="login.html" class="px-4 py-2.5 text-sm font-semibold text-gray-300 hover:text-white bg-gray-800/60 hover:bg-gray-800 border border-gray-700/50 rounded-xl transition-all duration-300 flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-                    ADMIN
+            <div class="flex items-center gap-2 sm:gap-4">
+                <a href="login.html" class="px-3 sm:px-4 py-2.5 text-sm font-semibold text-gray-300 hover:text-white bg-gray-800/60 hover:bg-gray-800 border border-gray-700/50 rounded-xl transition-all duration-300 flex items-center gap-2 whitespace-nowrap">
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                    <span class="hidden xs:inline">ADMIN</span>
                 </a>
-                <a href="https://wa.me/37433488275" target="_blank" rel="noopener noreferrer" class="px-5 py-2.5 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 rounded-xl transition-all duration-300 shadow-lg shadow-blue-600/20 hover:shadow-blue-500/30 flex items-center gap-2">
+                <a href="https://wa.me/37433488275" target="_blank" rel="noopener noreferrer" class="px-4 sm:px-5 py-2.5 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 rounded-xl transition-all duration-300 shadow-lg shadow-blue-600/20 hover:shadow-blue-500/30 flex items-center gap-2 whitespace-nowrap">
                     + Վաճառել
                 </a>
             </div>
@@ -250,6 +302,22 @@
 
             window.addEventListener('scroll', revealOnScroll);
             revealOnScroll();
+
+            // Mobile burger menu
+            const burgerToggle = document.getElementById('burgerToggle');
+            const mobileMenu = document.getElementById('mobileMenu');
+
+            burgerToggle.addEventListener('click', () => {
+                burgerToggle.classList.toggle('open');
+                mobileMenu.classList.toggle('open');
+            });
+
+            mobileMenu.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    burgerToggle.classList.remove('open');
+                    mobileMenu.classList.remove('open');
+                });
+            });
         });
     </script>
 </body>
