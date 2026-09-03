@@ -54,11 +54,7 @@
     const auth = getAuth(app);
 
     // Եթե արդեն մուտք է գործած, անմիջապես տանել admin.html
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        window.location.href = "admin.html";
-      }
-    });
+  
 
     const loginForm = document.getElementById("loginForm");
     const loginBtn = document.getElementById("loginBtn");
