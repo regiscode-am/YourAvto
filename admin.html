@@ -225,7 +225,7 @@
                     <input type="number" id="carSalePrice" class="form-input" placeholder="Զեղչված գին (ոչ պարտադիր)...">
                 </div>
                 <div class="form-group">
-                    <input type="tel" id="carPhone" class="form-input" placeholder="WhatsApp հեռ. համար (ոչ պարտադիր, կփոխարինի հիմնականին)...">
+                    <input type="tel" id="carPhone" class="form-input" placeholder="WhatsApp հեռ. համար (ոչ պարտադիր)...">
                 </div>
                 <div class="form-group">
                     <textarea id="carBio" class="form-input" rows="4" placeholder="Նկարագրություն մեքենայի մասին..."></textarea>
@@ -244,7 +244,7 @@
                 </div>
 
                 <button id="addCarBtn" class="btn-dark" style="margin-top:18px;">Ավելացնել Կատալոգում</button>
-                <p id="carLoading" class="loading-text">Նկարները վերբեռնվում են Firebase Storage-ում...</p>
+                <p id="carLoading" class="loading-text">Նկարները վերբեռնվում են Cloudinary-ում...</p>
                 <div class="upload-progress" id="carProgress">
                     <span id="carProgressText">Վերբեռնվում է...</span>
                     <div class="progress-bar-wrap"><div class="progress-bar-fill" id="carProgressBar"></div></div>
@@ -362,28 +362,22 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
 
-// ─── Cloudinary — նկարների պահպանման համար (փոխարինում է Firebase Storage-ին) ─
+// ─── Cloudinary ───
 const CLOUD_NAME = "jen1qefq";
 const UPLOAD_PRESET = "youravto";
 
-// ─── Ադմինի պաշտպանություն. պետք է համընկնի ej.html-ի ADMIN_EMAIL-ի հետ ───
+// ─── Ադմինի պաշտպանություն ───
 const ADMIN_EMAIL = "noromelk427@gmail.com";
 
-let isAuthChecked = false;
 onAuthStateChanged(auth, (user) => {
-    if (!isAuthChecked) isAuthChecked = true;
     if (user) {
         if (user.email !== ADMIN_EMAIL) {
             alert("Մուտքն արգելված է։ Դուք ադմինիստրատոր չեք։");
             window.location.href = "ej.html";
         }
     } else {
-        setTimeout(() => {
-            if (!auth.currentUser) {
-                alert("Մուտքն արգելված է։ Խնդրում ենք նախապես անցնել նույնականացում։");
-                window.location.href = "ej.html";
-            }
-        }, 1000);
+        alert("Մուտքն արգելված է։ Խնդրում ենք նախապես անցնել նույնականացում։");
+        window.location.href = "ej.html";
     }
 });
 
@@ -461,7 +455,6 @@ function priceText(c) {
     return `${Number(c.price || 0).toLocaleString('hy-AM')} AMD`;
 }
 
-// ─── Firebase Storage upload/delete (նույն մոտեցումով ինչ Michelle-ի admin-ը) ─
 function compressImageFile(file, maxWidth = 1200, quality = 0.8) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -491,10 +484,6 @@ function compressImageFile(file, maxWidth = 1200, quality = 0.8) {
     });
 }
 
-/**
- * Սեղմում է նկարը (browser-ում) և վերբեռնում Cloudinary-ում՝ unsigned upload
- * preset-ով (XHR, որ progress-ը հասանելի լինի)։ Վերադարձնում է secure_url-ը։
- */
 async function uploadToCloudinary(file, progressBarId, progressTextId) {
     let uploadFile = file;
     try { uploadFile = await compressImageFile(file, 1200, 0.8); }
@@ -549,17 +538,9 @@ async function uploadMultipleToCloudinary(files, progressBarId, progressTextId) 
     return urls;
 }
 
-/**
- * Cloudinary-ից նկար ջնջելը client-side հնարավոր չէ առանց API Secret-ի
- * (unsigned preset-ը թույլ չի տալիս destroy-ի կանչեր)։ Այս ֆունկցիան
- * միայն հեռացնում է URL-ը Database-ից. բուն ֆայլը կմնա Cloudinary-ում
- * («որբ» ֆայլ)։ Եթե ուզում ես իրական ջնջում, պետք է սեփական backend/
- * Cloud Function՝ Admin API-ով, կամ պարբերաբար մաքրիր Cloudinary Media
- * Library-ից ձեռքով («Unused assets» ֆիլտրով)։
- */
 async function deleteFromStorage(url) {
     if (!url || typeof url !== 'string') return;
-    console.info('Ուշադրություն. Cloudinary ֆայլը ինքնաշխատ չի ջնջվում (պահանջում է server-side Admin API):', url);
+    console.info('Cloudinary asset cleanup requires server API context:', url);
 }
 
 // ─── Stock toggle ────────────────────────────────────────────────────────
