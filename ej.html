@@ -425,7 +425,7 @@ function buildPriceHTML(car){
     if (car.salePrice && Number(car.salePrice) > 0){
         return `<span class="car-price has-sale">${Number(car.price).toLocaleString('hy-AM')} AMD</span><span class="car-sale-price">${Number(car.salePrice).toLocaleString('hy-AM')} AMD</span>`;
     }
-    return `<span class="car-price">${Number(car.price||0).toLocaleString('hy-AM')} AMD</span>`;
+    return `<span class="car-price">${Number(car.price||0).toLocaleString('hy-AM')} USD</span>`;
 }
 
 function buildMetaHTML(car){
