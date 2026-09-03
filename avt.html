@@ -241,7 +241,7 @@
                     <div class="modal-prices-display">
                         <span class="price-value" id="detPriceOld"></span>
                         <span class="price-value" id="detPrice">0</span>
-                        <span style="font-weight:600;color:#fff;">AMD</span>
+                        <span style="font-weight:600;color:#fff;">USD</span>
                     </div>
                 </div>
 
@@ -359,14 +359,14 @@ function updatePriceDisplay(car){
     const oldEl = document.getElementById('detPriceOld');
     const curEl = document.getElementById('detPrice');
     if (car.salePrice && Number(car.salePrice) > 0){
-        oldEl.innerText = Number(car.price).toLocaleString('hy-AM') + " AMD";
+        oldEl.innerText = Number(car.price).toLocaleString('en-US') + " USD";
         oldEl.className = "price-value old-struck";
         oldEl.style.display = "inline";
-        curEl.innerText = Number(car.salePrice).toLocaleString('hy-AM');
+        curEl.innerText = Number(car.salePrice).toLocaleString('en-US');
         curEl.className = "price-value new-sale";
     } else {
         oldEl.style.display = "none";
-        curEl.innerText = Number(car.price || 0).toLocaleString('hy-AM');
+        curEl.innerText = Number(car.price || 0).toLocaleString('en-US');
         curEl.className = "price-value";
     }
 }
