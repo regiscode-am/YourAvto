@@ -37,7 +37,14 @@
     }
 
     /* ===== Layout ===== */
-    .admin-shell{display:flex;min-height:100vh;position:relative;z-index:1;}
+    .admin-shell{display:none;min-height:100vh;position:relative;z-index:1;}
+    .admin-shell.auth-ok{display:flex;}
+    .auth-check-overlay{
+        position:fixed;inset:0;background:var(--bg);z-index:9999;
+        display:flex;align-items:center;justify-content:center;
+        color:var(--text-dim);font-size:14px;font-weight:600;
+    }
+    .auth-check-overlay.hidden{display:none;}
     .sidebar{
         width:230px;flex-shrink:0;background:rgba(11,15,23,0.85);
         border-right:1px solid var(--border);backdrop-filter:blur(10px);
@@ -179,6 +186,8 @@
 </head>
 <body>
 <div class="glow-bg"></div>
+
+<div class="auth-check-overlay" id="authCheckOverlay">Ստուգվում է մուտքի իրավունքը...</div>
 
 <div class="admin-shell">
     <aside class="sidebar">
@@ -370,14 +379,14 @@ const UPLOAD_PRESET = "youravto";
 const ADMIN_EMAIL = "noromelk427@gmail.com";
 
 onAuthStateChanged(auth, (user) => {
-    if (user) {
-        if (user.email !== ADMIN_EMAIL) {
-            alert("Մուտքն արգելված է։ Դուք ադմինիստրատոր չեք։");
-            window.location.href = "ej.html";
-        }
+    if (user && user.email === ADMIN_EMAIL) {
+        // Հաստատված admin. ցույց ենք տալիս էջը և բեռնում տվյալները։
+        document.getElementById('authCheckOverlay').classList.add('hidden');
+        document.querySelector('.admin-shell').classList.add('auth-ok');
+        initAdminData();
     } else {
-        alert("Մուտքն արգելված է։ Խնդրում ենք նախապես անցնել նույնականացում։");
-        window.location.href = "ej.html";
+        // Կամ մուտք չկա, կամ սխալ email. ուղարկում ենք login.html, առանց admin-ի պարունակությունը ցույց տալու։
+        window.location.href = "login.html";
     }
 });
 
@@ -840,10 +849,12 @@ let ordersOldestKey = null;
 let ordersLoading = false;
 let ordersAllLoaded = false;
 
-onValue(ref(db, 'orders'), (snapshot) => {
-    const data = snapshot.val() || {};
-    document.getElementById('orders-badge').innerText = Object.keys(data).length;
-});
+function initOrdersBadge() {
+    onValue(ref(db, 'orders'), (snapshot) => {
+        const data = snapshot.val() || {};
+        document.getElementById('orders-badge').innerText = Object.keys(data).length;
+    });
+}
 
 function renderOrderCards(items) {
     const list = document.getElementById('adminOrdersList');
@@ -947,7 +958,10 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     });
 });
 
-loadMoreCars();
+function initAdminData() {
+    initOrdersBadge();
+    loadMoreCars();
+}
 </script>
 </body>
 </html>
